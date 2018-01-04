@@ -33,7 +33,7 @@ namespace Playgrounds.Forms
 
 		async void CreateScene ()
 		{
-			Input.SubscribeToTouchEnd(OnTouched);
+            Input.TouchEnd += Input_TouchEnd;
 
 			var cache = ResourceCache;
 			scene = new Scene ();
@@ -76,21 +76,21 @@ namespace Playgrounds.Forms
 			movementsEnabled = true;
 		}
 
-		void OnTouched(TouchEndEventArgs e)
-		{
-			Ray cameraRay = camera.GetScreenRay((float)e.X / Graphics.Width, (float)e.Y / Graphics.Height);
-			var results = octree.RaycastSingle(cameraRay, RayQueryLevel.Triangle, 100, DrawableFlags.Geometry);
-			if (results != null)
-			{
-				var bar = results.Value.Node?.Parent?.GetComponent<Bar>();
-				if (SelectedBar != bar)
-				{
-					SelectedBar?.Deselect();
-					SelectedBar = bar;
-					SelectedBar?.Select();
-				}
-			}
-		}
+        private void Input_TouchEnd(TouchEndEventArgs e)
+        {
+            Ray cameraRay = camera.GetScreenRay((float)e.X / Graphics.Width, (float)e.Y / Graphics.Height);
+            var results = octree.RaycastSingle(cameraRay, RayQueryLevel.Triangle, 100, DrawableFlags.Geometry);
+            if (results != null)
+            {
+                var bar = results.Value.Node?.Parent?.GetComponent<Bar>();
+                if (SelectedBar != bar)
+                {
+                    SelectedBar?.Deselect();
+                    SelectedBar = bar;
+                    SelectedBar?.Select();
+                }
+            }
+        }
 
 		protected override void OnUpdate(float timeStep)
 		{
@@ -111,8 +111,15 @@ namespace Playgrounds.Forms
 		{
 			var renderer = Renderer;
 			renderer.SetViewport (0, new Viewport (Context, scene, camera, null));
-		}
-	}
+
+            UnhandledException += UrhoViewApp_UnhandledException;
+        }
+
+        private void UrhoViewApp_UnhandledException(object sender, Urho.UnhandledExceptionEventArgs e)
+        {
+            e.Handled = true;
+        }
+    }
 
 	public class Bar : Component
 	{
