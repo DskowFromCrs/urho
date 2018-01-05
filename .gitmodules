@@ -3,4 +3,4 @@
 	url = git@github.com:DskowFromCrs/Urho3D.git
 [submodule "Samples"]
 	path = Samples
-	url = git@github.com:dskow-publishing-llcxamarin/urho-samples.git
+	url = git@github.com:dskow-publishing-llc/urho-samples.git
